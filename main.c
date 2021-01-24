@@ -214,7 +214,7 @@ struct node* frontval(struct priority_queue*pq){
     return max_val(pq->heap);
 }
 
-int count_word(char* filename, char* keyword){
+int count_word(char* filename, char* keyword,int  flag){
     int count=0;
     char filen[100]="./files/";
     char buff[100];
@@ -228,13 +228,19 @@ int count_word(char* filename, char* keyword){
 
     while(fscanf(file,"%s",buff)==1){
         if(strcmp(keyword,buff)==0)count++;
+        if(flag) printf("%s ",buff);
     }
+
+    if(flag)printf("\n\n\n\n");
+
     fclose(file);
+
     return count;
 }
 
 int main(){
     struct priority_queue *pq=createPQ();
+    struct priority_queue *pq1=createPQ();
     // for(int i=0;i<25;++i){
     //     struct node* temp=createNode();
     //     temp->n=rand()%100;
@@ -254,32 +260,62 @@ int main(){
     }
 
     char keyword[100];
+    int relevantDocuments;
     printf("Enter the keyword: ");
     scanf("%s",keyword);
-
+    printf("Enter the no. of relevant documents: ");
+    scanf("%d",&relevantDocuments);
     while((de=readdir(directory))!=NULL){
         if(strcmp(".",de->d_name)!=0 && strcmp("..",de->d_name)!=0){
-        int cou=count_word(de->d_name,keyword);
+        int cou=count_word(de->d_name,keyword,0);
         // printf("%s  %d\n",de->d_name,cou);
 
         struct node* temp=createNode();
+        struct node* temp1=createNode();
+
         temp->n=cou;
         temp->filename=(char*)malloc(100*sizeof(char));
+
+        temp1->n=cou;
+        temp1->filename=(char*)malloc(100*sizeof(char));
+
         strcpy(temp->filename,de->d_name);
+        strcpy(temp1->filename,de->d_name);
+
         enqueue(pq,temp);
-
-
+        enqueue(pq1,temp1);
         }
-
     }
     printf("\v");
-    for(int i=1;i<=5;++i){
-        printf("%d. %ld occurences in file %s\n",i,frontval(pq)->n,frontval(pq)->filename);
+    printf("The relevance order is: ");
+
+    struct priority_queue* temp=createPQ();
+    for(int i=1;i<=relevantDocuments;++i){
+        if(frontval(pq)->n<=0)break;
+        printf("%s(%ld) ",frontval(pq)->filename,frontval(pq)->n);
+        // printf("%d. %ld occurences in file %s\n",i,frontval(pq)->n,frontval(pq)->filename);
+        // struct node* temp=createNode();
         dequeue(pq);
+        // dequeue(pq1);
+    }
+    printf("\n");
+
+    for(int i=1;i<=relevantDocuments;++i){
+        if(frontval(pq)->n<=0)break;
+
+        printf("%s(%ld): ",frontval(pq1)->filename,frontval(pq1)->n );
+        count_word(frontval(pq1)->filename,keyword,1);
+        dequeue(pq1);
+        printf("\n\n\n\n\n\n" );
     }
 
-
     closedir(directory);
+
+
+
+
+
+
     return 0;
 
 }
