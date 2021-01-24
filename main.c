@@ -298,7 +298,7 @@ int main(){
         dequeue(pq);
         // dequeue(pq1);
     }
-    printf("\n");
+    printf("\n\n\n\n");
 
     for(int i=1;i<=relevantDocuments;++i){
         if(frontval(pq)->n<=0)break;
@@ -306,7 +306,7 @@ int main(){
         printf("%s(%ld): ",frontval(pq1)->filename,frontval(pq1)->n );
         count_word(frontval(pq1)->filename,keyword,1);
         dequeue(pq1);
-        printf("\n\n\n\n\n\n" );
+        // printf("\n\n\n\n\n\n" );
     }
 
     closedir(directory);
